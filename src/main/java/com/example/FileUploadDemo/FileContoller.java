@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,7 +21,7 @@ public class FileContoller {
     }
 
     @PostMapping("/upload")
-    public String doUpload(MultipartFile xfile, Model model){
+    public String doUpload(MultipartFile xfile, Model model) throws IOException {
         if(xfile==null || xfile.isEmpty()){
             System.out.println("нет файла");
             model.addAttribute("message", "нет файла");
@@ -30,10 +31,16 @@ public class FileContoller {
             System.out.println("xfile.getSize() = " + xfile.getSize());
             model.addAttribute("message", "получен файл "+xfile.getOriginalFilename());
             model.addAttribute("size", xfile.getSize());
-            Path path = Path.of("directoryForUserFiles"+"/"+xfile.getOriginalFilename());
+
+            //File file = File.createTempFile(xfile.getOriginalFilename(),".xls");
+          //  file.deleteOnExit(); // удаляет временный файл только при успешном завершении программы
+            File file = new File("C:\\Users\\tatiana.anisimova\\OneDrive - Awara IT\\Рабочий стол\\JAVA\\"+xfile.getOriginalFilename());
+           // Path path = Path.of("C:\\Users\\tatiana.anisimova\\OneDrive - Awara IT\\Рабочий стол\\JAVA\\"+xfile.getOriginalFilename());
+            System.out.println(file.toString());
             try {
                 //Сохранение файла на сервере
-                xfile.transferTo(path);
+                System.out.println("Сохраняем");
+                xfile.transferTo(file);
             } catch (IOException e) {
                 System.out.println("не удалось сохранить файл: "+e.getMessage());
                 model.addAttribute("errorMessage", "не удалось сохранить файл: "+e.getMessage());
